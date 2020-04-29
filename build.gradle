@@ -1,0 +1,79 @@
+plugins {
+	id 'org.springframework.boot' version '2.2.6.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'java'
+	id 'com.google.cloud.tools.jib' version '1.8.0'
+	id 'com.bmuschko.docker-remote-api' version '6.4.0'
+}
+
+import com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerStartContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerRemoveContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerStopContainer
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.bmuschko.gradle.docker.tasks.image.DockerRemoveImage
+import com.bmuschko.gradle.docker.tasks.image.Dockerfile
+
+def dockerBuildDir = 'build/docker/'
+def imageVersion = '1.0'
+def uniqueContainerName = 'test_docker_plugin'
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+}
+
+test {
+	useJUnitPlatform()
+}
+
+task createDockerfile(type: Dockerfile) {
+	destFile = project.file("$dockerBuildDir/Dockerfile")
+	from 'amazoncorretto:11'
+	copyFile jar.archiveName, '/app/demo.jar'
+	entryPoint 'java'
+	defaultCommand '-jar', '/app/demo.jar'
+	exposePort 8080
+	runCommand 'apk --update --no-cache add curl'
+	instruction 'HEALTHCHECK CMD curl -f http://localhost:8080/hello || exit 1'
+}
+
+
+task syncJar(type: Copy) {
+	dependsOn assemble
+	from jar.archivePath
+	into dockerBuildDir
+}
+
+task buildImage(type: DockerBuildImage) {
+	dependsOn createDockerfile, syncJar
+	inputDir = project.file(dockerBuildDir)
+	images = ["firstDemo/demo:$imageVersion"]
+}
+
+task createContainer(type: DockerCreateContainer) {
+	dependsOn buildImage
+	targetImageId buildImage.getImageId()
+	containerName = "$uniqueContainerName"
+	portSpecs = ['8080:8080']
+}
+
+task startContainer(type: DockerStartContainer) {
+	dependsOn createContainer
+	targetContainerId("$uniqueContainerName")
+}
+
+
