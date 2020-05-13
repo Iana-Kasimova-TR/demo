@@ -4,14 +4,13 @@ plugins {
 	id 'java'
 	id 'com.google.cloud.tools.jib' version '1.8.0'
 	id 'com.bmuschko.docker-remote-api' version '6.4.0'
+	id 'maven-publish'
+	id "org.sonarqube" version "2.8"
 }
 
 import com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer
 import com.bmuschko.gradle.docker.tasks.container.DockerStartContainer
-import com.bmuschko.gradle.docker.tasks.container.DockerRemoveContainer
-import com.bmuschko.gradle.docker.tasks.container.DockerStopContainer
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
-import com.bmuschko.gradle.docker.tasks.image.DockerRemoveImage
 import com.bmuschko.gradle.docker.tasks.image.Dockerfile
 
 def dockerBuildDir = 'build/docker/'
@@ -40,15 +39,35 @@ test {
 	useJUnitPlatform()
 }
 
+publishing {
+	repositories {
+		maven {
+			name = "GitHubPackages"
+			url = uri("https://maven.pkg.github.com/Iana-Kasimova-TR/demo")
+		}
+	}
+	publications {
+		gpr(MavenPublication) {
+			from(components.java)
+		}
+	}
+}
+
+sonarqube {
+	properties {
+		property "sonar.projectKey", "Iana-Kasimova-TR_demo"
+		property "sonar.organization", "iana-kasimova-tr"
+		property "sonar.host.url", "https://sonarcloud.io"
+	}
+}
+
 task createDockerfile(type: Dockerfile) {
 	destFile = project.file("$dockerBuildDir/Dockerfile")
 	from 'amazoncorretto:11'
-	copyFile jar.archiveName, '/app/demo.jar'
+	copyFile jar.archiveName, '/app/cook.jar'
 	entryPoint 'java'
-	defaultCommand '-jar', '/app/demo.jar'
+	defaultCommand '-jar', '/app/cook.jar'
 	exposePort 8080
-	runCommand 'apk --update --no-cache add curl'
-	instruction 'HEALTHCHECK CMD curl -f http://localhost:8080/hello || exit 1'
 }
 
 
@@ -61,7 +80,7 @@ task syncJar(type: Copy) {
 task buildImage(type: DockerBuildImage) {
 	dependsOn createDockerfile, syncJar
 	inputDir = project.file(dockerBuildDir)
-	images = ["firstDemo/demo:$imageVersion"]
+	images = ["simply/cook:$imageVersion"]
 }
 
 task createContainer(type: DockerCreateContainer) {
