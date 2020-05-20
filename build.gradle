@@ -1,12 +1,31 @@
 plugins {
-	id 'org.springframework.boot' version '2.2.6.RELEASE'
+	id 'org.springframework.boot' version '2.3.0.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
 	id 'java'
 	id 'com.google.cloud.tools.jib' version '1.8.0'
 	id 'com.bmuschko.docker-remote-api' version '6.4.0'
-	id 'maven-publish'
+	id ('maven-publish')
 	id "org.sonarqube" version "2.8"
 }
+
+publishing {
+	repositories {
+		maven {
+			name = "GitHubPackages"
+			url = uri("https://maven.pkg.github.com/Iana-Kasimova-TR/simplyCook")
+			credentials {
+				username = System.getenv("GITHUB_ACTOR")
+				password = System.getenv("GITHUB_TOKEN")
+			}
+		}
+	}
+	publications {
+		gpr(MavenPublication) {
+			artifact bootJar
+		}
+	}
+}
+
 
 import com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer
 import com.bmuschko.gradle.docker.tasks.container.DockerStartContainer
@@ -21,8 +40,13 @@ group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
+
 repositories {
 	mavenCentral()
+}
+
+ext {
+	set('springCloudVersion', "Hoxton.SR4")
 }
 
 dependencies {
@@ -31,26 +55,22 @@ dependencies {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	compileOnly 'org.projectlombok:lombok:1.18.12'
+	annotationProcessor 'org.projectlombok:lombok:1.18.12'
 }
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}
+
 
 test {
 	useJUnitPlatform()
-}
-
-publishing {
-	repositories {
-		maven {
-			name = "GitHubPackages"
-			url = uri("https://maven.pkg.github.com/Iana-Kasimova-TR/demo")
-		}
-	}
-	publications {
-		gpr(MavenPublication) {
-			from(components.java)
-		}
-	}
 }
 
 sonarqube {
