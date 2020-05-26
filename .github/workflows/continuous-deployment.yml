@@ -19,7 +19,7 @@ jobs:
         with:
           java-version: 11.0.4
       - name: gradle Package
-        run:  chmod +x gradlew build
+        run:  ./gradlew build
 
   sonar:
     name: Test - SonarCloud Scan
