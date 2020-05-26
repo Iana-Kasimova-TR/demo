@@ -59,7 +59,7 @@ ext {
 }
 
 dependencies {
-	implementation 'com.simply:simplyCook-common:0.0.1-SNAPSHOT'
+	implementation 'com.simply:simplyCook-common:0.0.2-SNAPSHOT'
 	implementation 'org.springframework.boot:spring-boot-starter'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
