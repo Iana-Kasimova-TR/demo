@@ -24,7 +24,6 @@ jobs:
   sonar:
     name: Test - SonarCloud Scan
     runs-on: ubuntu-18.04
-//add influence on build and also results unit tests(publish results) and jacoco add to build
     steps:
       - uses: actions/checkout@v1
       - name: Set up JDK 11
@@ -56,7 +55,7 @@ jobs:
   docker:
     name: Publish - Docker Hub
     runs-on: ubuntu-18.04
-    needs: [test, sonar]
+    needs: [test]
     env:
       REPO: ${{ secrets.DOCKER_REPO }}
 
