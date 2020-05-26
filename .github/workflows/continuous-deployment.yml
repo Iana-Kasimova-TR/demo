@@ -20,6 +20,8 @@ jobs:
           java-version: 11.0.4
       - name: gradle Package
         run:  ./gradlew build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
   sonar:
     name: Test - SonarCloud Scan
