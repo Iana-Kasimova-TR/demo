@@ -70,10 +70,6 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 11.0.4
-    - name: gradle Package
-      run:  ./gradlew build
-      env:
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
     - uses: actions/checkout@v1
     - name: Publish image Docker Hub
       uses: docker/build-push-action@v1
@@ -82,4 +78,5 @@ jobs:
         password: ${{ secrets.DOCKER_PASS }}
         repository: mycook/simplycook
         tags: latest
-        target: test
+        dockerfile: ./Dockerfile
+        path: ./simplyCook
