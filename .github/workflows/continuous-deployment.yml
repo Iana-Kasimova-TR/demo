@@ -22,9 +22,9 @@ jobs:
         run:  ./gradlew build
       - name: Save the simpleCook jar artifact
         uses: actions/upload-artifact@v1
-         with:
-           name: simplyCook
-           path: ./simplyCook/build/libs
+        with:
+          name: simplyCook
+          path: ./simplyCook/build/libs
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
