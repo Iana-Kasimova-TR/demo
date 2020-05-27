@@ -82,4 +82,4 @@ jobs:
         password: ${{ secrets.DOCKER_PASS }}
         repository: mycook/simplycook
         tags: latest
-        path: ./simplyCook
+        target: test
