@@ -68,5 +68,5 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASS }}
-          repository: myCook/simplycook
+          repository: mycook/simplycook
           tags: latest
