@@ -70,6 +70,10 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 11.0.4
+    - name: Restore Javalin-Start artifact from storage
+      uses: actions/download-artifact@v1
+      with:
+       name: simplyCook
     - uses: actions/checkout@v1
     - name: Publish image Docker Hub
       uses: docker/build-push-action@v1
