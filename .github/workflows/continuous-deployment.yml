@@ -20,13 +20,13 @@ jobs:
           java-version: 11.0.4
       - name: gradle Package
         run:  ./gradlew build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       - name: Save the simpleCook jar artifact
         uses: actions/upload-artifact@v1
         with:
           name: simplyCook
           path: ./simplyCook/build/libs
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
   sonar:
     name: Test - SonarCloud Scan
