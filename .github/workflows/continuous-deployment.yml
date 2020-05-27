@@ -83,4 +83,4 @@ jobs:
         repository: mycook/simplycook
         tags: latest
         dockerfile: ./Dockerfile
-        path: ./simplyCook
+        path: /home/runner/work/simplyCook/simplyCook/simplyCook
