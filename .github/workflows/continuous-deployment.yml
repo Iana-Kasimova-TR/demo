@@ -70,7 +70,7 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 11.0.4
-    - name: Restore Javalin-Start artifact from storage
+    - name: Restore simpleCook artifact from storage
       uses: actions/download-artifact@v1
       with:
        name: simplyCook-artifact
@@ -79,7 +79,7 @@ jobs:
       with:
         username: ${{ secrets.DOCKER_USER }}
         password: ${{ secrets.DOCKER_PASS }}
-        repository: mycook/simplycook
+        repository: keysonya/simplycook
         tags: latest
         dockerfile: ./Dockerfile
         path: ./simplyCook-artifact
